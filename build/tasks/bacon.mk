@@ -11,6 +11,7 @@ FORTUNE_TARGET_PACKAGE := $(PRODUCT_OUT)/$(FORTUNE_ZIP_NAME)
 fortune: $(INTERNAL_OTA_PACKAGE_TARGET)
 	@echo "FortuneOS OTA package"
 	$(hide) mv $(INTERNAL_OTA_PACKAGE_TARGET) $(FORTUNE_TARGET_PACKAGE)
+	$(hide) ./vendor/fortune/tools/generate_json_build_info.sh $(FORTUNE_TARGET_PACKAGE)
 	@echo ""
 	@echo "Package Completed:"
 	@echo ""
