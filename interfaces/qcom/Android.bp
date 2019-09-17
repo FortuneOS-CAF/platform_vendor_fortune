@@ -1,0 +1,15 @@
+//
+// Copyright (C) 2024 FortuneOS
+//
+// SPDX-License-Identifier: Apache-2.0
+//
+
+hidl_package_root {
+    name: "com.qualcomm.qti.bluetooth_audio",
+    path: "vendor/fortune/interfaces/qcom/bluetooth_audio",
+}
+
+hidl_package_root {
+    name: "vendor.qti.hardware.btconfigstore",
+    path: "vendor/fortune/interfaces/qcom/btconfigstore",
+}
