@@ -9,6 +9,9 @@ PRODUCT_PACKAGES += \
     Launcher3QuickStep \
     ThemePicker
 
+# Fonts
+include vendor/fortune/config/fonts.mk
+
 # Gestures
 PRODUCT_PACKAGES += \
     vendor.aospa.power-service
