@@ -9,8 +9,10 @@
 
 FORTUNE_TARGET_PACKAGE := $(PRODUCT_OUT)/$(FORTUNE_VERSION).zip
 
+MD5 := prebuilts/build-tools/path/$(HOST_OS)-x86/md5sum
+
 .PHONY: fortune
 fortune: $(INTERNAL_OTA_PACKAGE_TARGET)
 	$(hide) ln -f $(INTERNAL_OTA_PACKAGE_TARGET) $(FORTUNE_TARGET_PACKAGE)
-	$(hide) $(MD5SUM) $(FORTUNE_TARGET_PACKAGE) | sed "s|$(PRODUCT_OUT)/||" > $(FORTUNE_TARGET_PACKAGE).md5sum
+	$(hide) $(MD5) $(FORTUNE_TARGET_PACKAGE) | sed "s|$(PRODUCT_OUT)/||" > $(FORTUNE_TARGET_PACKAGE).md5sum
 	@echo "Package Complete: $(FORTUNE_TARGET_PACKAGE)" >&2
