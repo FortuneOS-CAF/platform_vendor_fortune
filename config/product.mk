@@ -5,6 +5,7 @@
 #
 
 # FortuneOS
+$(call inherit-product, vendor/fortune/config/bootanimation.mk)
 $(call inherit-product, vendor/fortune/config/packages.mk)
 $(call inherit-product, vendor/fortune/config/properties.mk)
 $(call inherit-product, vendor/fortune/config/version.mk)
@@ -25,10 +26,6 @@ PRODUCT_PACKAGE_OVERLAYS += vendor/fortune/overlay
 # HIDL
 DEVICE_FRAMEWORK_COMPATIBILITY_MATRIX_FILE += \
      vendor/fortune/config/fortune_vendor_framework_compatibility_matrix.xml
-
-# Boot animation
-PRODUCT_COPY_FILES += \
-    vendor/fortune/prebuilt/media/bootanimation.zip:$(TARGET_COPY_OUT_PRODUCT)/media/bootanimation.zip
 
 # APN list
 PRODUCT_COPY_FILES += \
