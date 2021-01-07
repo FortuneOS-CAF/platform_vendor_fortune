@@ -34,6 +34,10 @@ endif
 # Include SEPolicy makefile.
 $(call inherit-product, vendor/fortune/sepolicy/sepolicy.mk)
 
+# HIDL
+DEVICE_FRAMEWORK_COMPATIBILITY_MATRIX_FILE += \
+     vendor/fortune/config/vintf/vendor_framework_compatibility_matrix.xml
+
 # Move Wi-Fi modules to vendor
 PRODUCT_VENDOR_MOVE_ENABLED := true
 

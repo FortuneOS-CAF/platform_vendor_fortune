@@ -25,6 +25,10 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     FortuneSystemUI
 
+# Gestures
+PRODUCT_PACKAGES += \
+    vendor.aospa.power-service
+
 # HIDL
 PRODUCT_PACKAGES += \
     android.hidl.base@1.0 \
