@@ -9,6 +9,10 @@ PRODUCT_PACKAGES += \
     Launcher3QuickStep \
     ThemePicker
 
+# Gestures
+PRODUCT_PACKAGES += \
+    vendor.aospa.power-service
+
 # Charger mode images
 PRODUCT_PACKAGES += \
     charger_res_images
