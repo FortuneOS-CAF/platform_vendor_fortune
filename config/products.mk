@@ -11,6 +11,7 @@ $(call inherit-product, device/qcom/common/common.mk)
 $(call inherit-product, vendor/qcom/sdclang/config/SnapdragonClang.mk)
 
 # Include FortuneOS makefiles
+$(call inherit-product, vendor/fortune/config/overlay.mk)
 $(call inherit-product, vendor/fortune/config/packages.mk)
 $(call inherit-product, vendor/fortune/config/properties.mk)
 $(call inherit-product, vendor/fortune/config/version.mk)
