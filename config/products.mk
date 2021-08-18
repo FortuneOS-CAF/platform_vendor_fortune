@@ -9,3 +9,6 @@ $(call inherit-product, device/qcom/common/common.mk)
 
 # Include definitions for Snapdragon Clang
 $(call inherit-product, vendor/qcom/sdclang/config/SnapdragonClang.mk)
+
+# Move Wi-Fi modules to vendor
+PRODUCT_VENDOR_MOVE_ENABLED := true
