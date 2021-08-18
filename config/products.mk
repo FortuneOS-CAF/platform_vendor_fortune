@@ -4,6 +4,9 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
+# Don't dexpreopt prebuilts. (For GMS).
+DONT_DEXPREOPT_PREBUILTS := true
+
 # Include Common Qualcomm Device Tree
 $(call inherit-product, device/qcom/common/common.mk)
 
@@ -15,6 +18,11 @@ $(call inherit-product, vendor/fortune/config/overlay.mk)
 $(call inherit-product, vendor/fortune/config/packages.mk)
 $(call inherit-product, vendor/fortune/config/properties.mk)
 $(call inherit-product, vendor/fortune/config/version.mk)
+
+# Include GMS, Modules and Pixel features
+$(call inherit-product, vendor/google/gms/config.mk)
+$(call inherit-product-if-exists, vendor/google/modules/build/mainline_modules_s.mk)
+$(call inherit-product, vendor/google/pixel/config.mk)
 
 # Include SEPolicy makefile.
 $(call inherit-product, vendor/fortune/sepolicy/sepolicy.mk)
