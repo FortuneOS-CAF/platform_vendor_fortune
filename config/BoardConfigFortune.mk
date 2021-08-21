@@ -13,3 +13,6 @@ include device/qcom/common/BoardConfigQcom.mk
 
 # Kernel configuration.
 include vendor/fortune/config/BoardConfigKernel.mk
+
+# Soong
+include vendor/fortune/config/BoardConfigSoong.mk
