@@ -1,2 +1,7 @@
 # CachedAppOptimizer
 allow system_server zygote_tmpfs:file rw_file_perms;
+
+# Pocket Judge
+allow system_server pocket_judge_sysfs:dir search;
+allow system_server pocket_judge_sysfs:file rw_file_perms;
+allow system_server pocket_service:service_manager { add find };
