@@ -29,3 +29,7 @@ PRODUCT_PACKAGES += \
 # Theme Picker
 PRODUCT_PACKAGES += \
     ThemePicker
+
+# WiFi
+PRODUCT_PACKAGES += \
+    libwpa_client
