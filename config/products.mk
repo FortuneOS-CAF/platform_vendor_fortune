@@ -59,6 +59,10 @@ SKIP_BOOT_JARS_CHECK := true
 # leave less information available via JDWP.
 PRODUCT_MINIMIZE_JAVA_DEBUG_INFO := true
 
+# Compile SystemUI on device with `speed`.
+PRODUCT_PROPERTY_OVERRIDES += \
+    dalvik.vm.systemuicompilerfilter=speed
+
 # Pre-optimization
 PRODUCT_DEXPREOPT_SPEED_APPS += \
     SystemUI
