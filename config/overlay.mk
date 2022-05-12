@@ -7,5 +7,6 @@
 PRODUCT_PACKAGES += \
     FortuneFrameworksOverlay \
     FortuneLauncherOverlay \
+    FortuneSettingsOverlay \
     FortuneSettingsProviderOverlay \
     FortuneSystemUIOverlay
