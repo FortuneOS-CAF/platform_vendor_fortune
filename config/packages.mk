@@ -24,8 +24,9 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     GoogleCameraGo
 
-# Set compiler filter "verify" and disable AOT-compilation in dexpreopt
-RELAX_USES_LIBRARY_CHECK := true
+# curl
+PRODUCT_PACKAGES += \
+    curl
 
 # HIDL
 PRODUCT_PACKAGES += \
