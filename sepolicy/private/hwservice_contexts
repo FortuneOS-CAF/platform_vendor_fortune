@@ -1,2 +1,0 @@
-# FOD
-vendor.lighthouse.biometrics.fingerprint.inscreen::IFingerprintInscreen    u:object_r:vendor_fod_hwservice:s0

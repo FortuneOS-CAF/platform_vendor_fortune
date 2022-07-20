@@ -6,6 +6,3 @@
 
 PRODUCT_PRIVATE_SEPOLICY_DIRS += \
     vendor/fortune/sepolicy/private
-
-PRODUCT_PUBLIC_SEPOLICY_DIRS += \
-    vendor/fortune/sepolicy/public
