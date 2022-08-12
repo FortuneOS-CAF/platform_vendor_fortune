@@ -69,9 +69,11 @@ PRODUCT_DEXPREOPT_SPEED_APPS += \
     SystemUI
 
 # Sensitive phone numbers and APN configurations
+ifneq ($(TARGET_NO_TELEPHONY), true)
 PRODUCT_COPY_FILES += \
     vendor/fortune/prebuilt/etc/apns-conf.xml:$(TARGET_COPY_OUT_PRODUCT)/etc/apns-conf.xml \
     vendor/fortune/prebuilt/etc/sensitive_pn.xml:$(TARGET_COPY_OUT_SYSTEM)/etc/sensitive_pn.xml
+endif
 
 # Enable whole-program R8 Java optimizations for SystemUI and system_server,
 # but also allow explicit overriding for testing and development.
