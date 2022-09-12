@@ -39,7 +39,7 @@ PRODUCT_PACKAGES += \
 
 # Theme Picker
 PRODUCT_PACKAGES += \
-    ThemePicker
+    FortuneThemePicker
 
 # Telephony - AOSP
 PRODUCT_PACKAGES += \
