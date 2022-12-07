@@ -61,7 +61,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
 # Pre-optimization
 PRODUCT_DEXPREOPT_SPEED_APPS += \
     Launcher3QuickStep \
-    SystemUI
+    FortuneSystemUI
 
 # Sensitive phone numbers and APN configurations
 ifneq ($(TARGET_NO_TELEPHONY), true)

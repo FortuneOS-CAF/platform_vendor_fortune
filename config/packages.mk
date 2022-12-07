@@ -21,6 +21,10 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     initial-package-stopped-states-aosp.xml
 
+# Fortune SystemUI
+PRODUCT_PACKAGES += \
+    FortuneSystemUI
+
 # HIDL
 PRODUCT_PACKAGES += \
     android.hidl.base@1.0 \
