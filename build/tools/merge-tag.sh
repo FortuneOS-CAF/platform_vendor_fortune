@@ -104,7 +104,7 @@ done
 echo -e "${blu}\nUpdating manifest..."
 if curl -Ls $MANIFEST_URL > $MANIFEST_XML; then
     $IS_QSSI || sed -i '3,7d' $MANIFEST_XML
-    if git -C manifest commit -aq -m "manifest: Update to $TAG" &> /dev/null; then
+    if git -C manifest commit -aq -m "manifest: update to $TAG" &> /dev/null; then
         echo -e "${blu}Manifest updated succesfully!"
         echo manifest >> success
     else
