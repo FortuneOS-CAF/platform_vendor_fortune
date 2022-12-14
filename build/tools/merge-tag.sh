@@ -75,7 +75,9 @@ for repo in $REPOS; do echo;
 
     cd $repo
     git checkout -q $BRANCH &> /dev/null || echo "${red}$repo checkout failed!"
-    git fetch --unshallow $REMOTE $BRANCH
+    if $(git rev-parse --is-shallow-repository); then
+    	git fetch --unshallow $REMOTE $BRANCH
+    fi
 
     if ! git fetch -q https://git.codelinaro.org/clo/la/$name $TAG &> /dev/null; then
         echo "${red}$repo fetch failed!"
