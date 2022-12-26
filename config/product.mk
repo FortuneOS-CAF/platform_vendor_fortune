@@ -62,3 +62,8 @@ endif
 # Permissions
 PRODUCT_COPY_FILES += \
     vendor/fortune/prebuilt/etc/permissions/default_permissions_com.google.android.deskclock.xml:$(TARGET_COPY_OUT_PRODUCT)/etc/default-permissions/default_permissions_com.google.android.deskclock.xml
+
+# Volume panel dialog - SystemUI
+PRODUCT_SYSTEM_EXT_PROPERTIES += \
+    sys.fflag.override.settings_volume_panel_in_systemui=true
+
