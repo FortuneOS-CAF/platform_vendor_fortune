@@ -4,6 +4,10 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
+# Charger
+PRODUCT_SYSTEM_EXT_PROPERTIES += \
+    ro.charger.enable_suspend=1
+
 # Enable Navigation gestures.
 PRODUCT_PRODUCT_PROPERTIES += \
     ro.boot.vendor.overlay.theme=com.android.internal.systemui.navbar.gestural
