@@ -17,6 +17,7 @@ $(foreach v,$(EXPORT_TO_SOONG),$(eval $(call addVar,$(v))))
 
 SOONG_CONFIG_NAMESPACES += fortuneGlobalVars
 SOONG_CONFIG_fortuneGlobalVars += \
+    bootloader_message_offset \
     needs_camera_boottime \
     powershare_node \
     target_camera_package_name \
@@ -37,6 +38,7 @@ SOONG_CONFIG_fortuneGlobalVars += \
 endif
 
 # Set default values
+BOOTLOADER_MESSAGE_OFFSET ?= 0
 TARGET_HEALTH_CHARGING_CONTROL_CHARGING_ENABLED ?= 1
 TARGET_HEALTH_CHARGING_CONTROL_CHARGING_DISABLED ?= 0
 TARGET_HEALTH_CHARGING_CONTROL_SUPPORTS_BYPASS ?= true
@@ -46,6 +48,7 @@ TARGET_INIT_VENDOR_LIB ?= vendor_init
 TARGET_SURFACEFLINGER_UDFPS_LIB ?= surfaceflinger_udfps_lib
 
 # Soong value variables
+SOONG_CONFIG_fortuneGlobalVars_bootloader_message_offset := $(BOOTLOADER_MESSAGE_OFFSET)
 SOONG_CONFIG_fortuneGlobalVars_needs_camera_boottime := $(TARGET_CAMERA_BOOTTIME_TIMESTAMP)
 SOONG_CONFIG_fortuneGlobalVars_powershare_node := $(TARGET_POWERSHARE_NODE)
 SOONG_CONFIG_fortuneGlobalVars_target_camera_package_name := $(TARGET_CAMERA_PACKAGE_NAME)
