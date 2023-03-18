@@ -15,6 +15,7 @@ $(foreach v,$(EXPORT_TO_SOONG),$(eval $(call addVar,$(v))))
 
 SOONG_CONFIG_NAMESPACES += fortuneGlobalVars
 SOONG_CONFIG_fortuneGlobalVars += \
+    bootloader_message_offset \
     needs_camera_boottime \
     target_camera_package_name \
     target_init_vendor_lib \
@@ -23,10 +24,12 @@ SOONG_CONFIG_fortuneGlobalVars += \
     target_surfaceflinger_udfps_lib
 
 # Set default values
+BOOTLOADER_MESSAGE_OFFSET ?= 0
 TARGET_INIT_VENDOR_LIB ?= vendor_init
 TARGET_SURFACEFLINGER_UDFPS_LIB ?= surfaceflinger_udfps_lib
 
 # Soong value variables
+SOONG_CONFIG_fortuneGlobalVars_bootloader_message_offset := $(BOOTLOADER_MESSAGE_OFFSET)
 SOONG_CONFIG_fortuneGlobalVars_needs_camera_boottime := $(TARGET_CAMERA_BOOTTIME_TIMESTAMP)
 SOONG_CONFIG_fortuneGlobalVars_target_camera_package_name := $(TARGET_CAMERA_PACKAGE_NAME)
 SOONG_CONFIG_fortuneGlobalVars_target_init_vendor_lib := $(TARGET_INIT_VENDOR_LIB)
