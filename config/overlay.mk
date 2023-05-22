@@ -9,7 +9,8 @@ PRODUCT_PACKAGES += \
     FortuneLauncherOverlay \
     FortuneSettingsOverlay \
     FortuneSettingsProviderOverlay \
-    FortuneSystemUIOverlay
+    FortuneSystemUIOverlay \
+    FortuneWifiOverlay
 
 PRODUCT_ENFORCE_RRO_EXCLUDED_OVERLAYS += vendor/fortune/overlay/static
 PRODUCT_PACKAGE_OVERLAYS += vendor/fortune/overlay/static
