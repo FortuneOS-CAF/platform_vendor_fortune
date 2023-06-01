@@ -15,18 +15,9 @@ endif
 PRODUCT_PACKAGES += \
     curl
 
-# Exfat FS
-PRODUCT_PACKAGES += \
-    fsck.exfat \
-    mkfs.exfat
-
 # Camera
 PRODUCT_PACKAGES += \
     GoogleCameraGo
-
-# curl
-PRODUCT_PACKAGES += \
-    curl
 
 # HIDL
 PRODUCT_PACKAGES += \
@@ -34,6 +25,21 @@ PRODUCT_PACKAGES += \
     android.hidl.manager@1.0 \
     android.hidl.base@1.0.vendor \
     android.hidl.manager@1.0.vendor
+
+# Include fs tools for dedicated recovery and ramdisk partitions.
+PRODUCT_PACKAGES += \
+    fsck.exfat \
+    mkfs.exfat
+
+PRODUCT_PACKAGES += \
+    e2fsck_ramdisk \
+    resize2fs_ramdisk \
+    tune2fs_ramdisk
+
+PRODUCT_PACKAGES += \
+    e2fsck.recovery \
+    resize2fs.recovery \
+    tune2fs.recovery
 
 # Neural Network
 PRODUCT_PACKAGES += \
