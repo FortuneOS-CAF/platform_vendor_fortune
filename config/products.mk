@@ -7,6 +7,9 @@
 # Don't dexpreopt prebuilts. (For GMS).
 DONT_DEXPREOPT_PREBUILTS := true
 
+# Enable support for APEX updates
+$(call inherit-product, $(SRC_TARGET_DIR)/product/updatable_apex.mk)
+
 # Include Common Qualcomm Device Tree
 $(call inherit-product, device/qcom/common/common.mk)
 
