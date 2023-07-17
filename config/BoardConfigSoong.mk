@@ -21,7 +21,8 @@ SOONG_CONFIG_fortuneGlobalVars += \
     target_process_sdk_version_override \
     target_surfaceflinger_udfps_lib \
     uses_oplus_camera \
-    uses_nothing_camera
+    uses_nothing_camera \
+    uses_miui_camera
 
 # Set default values
 TARGET_INIT_VENDOR_LIB ?= vendor_init
@@ -35,6 +36,7 @@ SOONG_CONFIG_fortuneGlobalVars_target_process_sdk_version_override := $(TARGET_P
 SOONG_CONFIG_fortuneGlobalVars_target_surfaceflinger_udfps_lib := $(TARGET_SURFACEFLINGER_UDFPS_LIB)
 SOONG_CONFIG_fortuneGlobalVars_uses_oplus_camera := $(TARGET_USES_OPLUS_CAMERA)
 SOONG_CONFIG_fortuneGlobalVars_uses_nothing_camera := $(TARGET_USES_NOTHING_CAMERA)
+SOONG_CONFIG_fortuneGlobalVars_uses_miui_camera := $(TARGET_USES_MIUI_CAMERA)
 
 # Qualcomm variables
 SOONG_CONFIG_NAMESPACES += aosp_vs_qva
