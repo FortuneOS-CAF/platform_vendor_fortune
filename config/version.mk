@@ -31,3 +31,11 @@ PRODUCT_SYSTEM_PROPERTIES += \
     org.fortune.device=$(FORTUNE_BUILD) \
     org.fortune.releasetype=$(FORTUNE_RELEASETYPE) \
     org.fortune.version=$(FORTUNE_VERSION)
+
+# Signing
+ifneq (,$(wildcard vendor/fortune/build/security/releasekey.pk8))
+PRODUCT_DEFAULT_DEV_CERTIFICATE := vendor/fortune/build/security/releasekey
+endif
+ifneq (,$(wildcard vendor/fortune/build/security/otakey.x509.pem))
+PRODUCT_OTA_PUBLIC_KEYS := vendor/fortune/build/security/otakey.x509.pem
+endif
