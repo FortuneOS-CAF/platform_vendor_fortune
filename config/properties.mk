@@ -21,10 +21,6 @@ PRODUCT_PRODUCT_PROPERTIES += \
 PRODUCT_SYSTEM_EXT_PROPERTIES += \
     ro.control_privapp_permissions?=log
 
-# Disable blur on app-launch
-PRODUCT_SYSTEM_EXT_PROPERTIES += \
-    ro.launcher.blur.appLaunch=0
-
 # Disable async MTE on system_server
 PRODUCT_SYSTEM_EXT_PROPERTIES += \
     persist.arm64.memtag.system_server=off
