@@ -6,8 +6,7 @@
 
 # Display
 PRODUCT_SYSTEM_EXT_PROPERTIES += \
-    debug.sf.frame_rate_multiple_threshold=60 \
-    ro.sf.use_latest_hwc_vsync_period=0
+    debug.sf.frame_rate_multiple_threshold=60
 
 # EGL - Blobcache configuration
 PRODUCT_SYSTEM_EXT_PROPERTIES += \
