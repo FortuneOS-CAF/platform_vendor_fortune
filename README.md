@@ -1,1 +1,0 @@
-# ReloadedOS vendor component

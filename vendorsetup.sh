@@ -1,4 +1,4 @@
-function __print_reloaded_functions_help() {
+function __print_fortune_functions_help() {
 cat <<EOF
 Additional functions:
 - mka:             Builds using all available CPUs
@@ -15,7 +15,7 @@ function brunch()
 {
     lunch $1-userdebug
     if [ $? -eq 0 ]; then
-        time m reloaded
+        time m fortune
     else
         echo "Lunch failed!"
         return 1
