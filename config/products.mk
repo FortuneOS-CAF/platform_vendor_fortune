@@ -23,10 +23,8 @@ $(call inherit-product, vendor/fortune/config/version.mk)
 $(call inherit-product, vendor/google/gms/config.mk)
 $(call inherit-product, vendor/google/pixel/config.mk)
 
-ifeq ($(TARGET_FLATTEN_APEX), false)
+ifneq ($(TARGET_EXCLUDE_GMODULES), true)
 $(call inherit-product-if-exists, vendor/google/modules/build/mainline_modules.mk)
-else
-$(call inherit-product-if-exists, vendor/google/modules/build/mainline_modules_flatten_apex.mk)
 endif
 
 ifneq ($(wildcard vendor/google/modules/.),)
