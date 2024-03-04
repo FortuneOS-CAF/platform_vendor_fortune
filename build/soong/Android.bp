@@ -1,63 +1,9 @@
-// ReloadedOS soong configs
-
-bootstrap_go_package {
-    name: "soong-reloaded-generator",
-    pkgPath: "reloaded/soong/generator",
-    deps: [
-        "blueprint",
-        "blueprint-pathtools",
-        "soong",
-        "soong-android",
-        "soong-shared",
-    ],
-    srcs: [
-        "generator/generator.go",
-        "generator/variables.go",
-    ],
-    pluginFor: ["soong_build"],
-}
-
-reloaded_generator {
-    name: "generated_kernel_includes",
-
-    // The headers make command
-    cmd: "$(PATH_OVERRIDE_SOONG) $(KERNEL_MAKE_CMD) $(KERNEL_MAKE_FLAGS) -C $(TARGET_KERNEL_SOURCE) O=$(KERNEL_BUILD_OUT_PREFIX)$(genDir) ARCH=$(KERNEL_ARCH) $(KERNEL_CROSS_COMPILE) headers_install",
-
-    // Directories that can be imported by a cc_* module generated_headers property
-    export_include_dirs: [
-        "usr/audio/include/uapi",
-        "usr/include",
-        "usr/include/audio/include/uapi",
-        "usr/techpack/audio/include"
-    ],
-
-    // Sources for dependency tracking
-    dep_root: "$(TARGET_KERNEL_SOURCE)",
-    dep_files: [ "Makefile", "include/**/*", "arch/$(KERNEL_ARCH)/include/**/*", "techpack/audio/include/**/*"],
-}
-
-cc_defaults {
-    name: "generated_kernel_header_defaults",
-    generated_headers: ["generated_kernel_includes"],
-    export_generated_headers: ["generated_kernel_includes"],
-    vendor_available: true,
-    recovery_available: true,
-}
-
-cc_library_headers {
-    name: "generated_kernel_headers",
-    defaults: ["generated_kernel_header_defaults"],
-}
-
-cc_library_headers {
-    name: "qti_kernel_headers",
-    defaults: ["generated_kernel_header_defaults"],
-}
+// FortuneOS soong configs
 
 soong_config_module_type {
     name: "powershare_node",
     module_type: "cc_defaults",
-    config_namespace: "reloadedGlobalVars",
+    config_namespace: "fortuneGlobalVars",
     value_variables: ["powershare_node"],
     properties: ["cppflags"],
 }
@@ -75,7 +21,7 @@ powershare_node {
 soong_config_module_type {
     name: "target_process_sdk_version_overrides",
     module_type: "cc_defaults",
-    config_namespace: "reloadedGlobalVars",
+    config_namespace: "fortuneGlobalVars",
     value_variables: ["target_process_sdk_version_override"],
     properties: ["cppflags"],
 }
@@ -92,7 +38,7 @@ target_process_sdk_version_overrides {
 soong_config_module_type {
     name: "target_shim_libs",
     module_type: "cc_defaults",
-    config_namespace: "reloadedGlobalVars",
+    config_namespace: "fortuneGlobalVars",
     value_variables: ["target_ld_shim_libs"],
     properties: ["cppflags"],
 }
@@ -109,7 +55,7 @@ target_shim_libs {
 soong_config_module_type {
     name: "vendor_init",
     module_type: "cc_defaults",
-    config_namespace: "reloadedGlobalVars",
+    config_namespace: "fortuneGlobalVars",
     value_variables: ["target_init_vendor_lib"],
     properties: ["whole_static_libs"],
 }
@@ -126,7 +72,7 @@ vendor_init {
 soong_config_module_type {
     name: "surfaceflinger_udfps_lib",
     module_type: "cc_defaults",
-    config_namespace: "reloadedGlobalVars",
+    config_namespace: "fortuneGlobalVars",
     value_variables: ["target_surfaceflinger_udfps_lib"],
     properties: [
         "cppflags",
@@ -147,7 +93,7 @@ surfaceflinger_udfps_lib {
 soong_config_module_type {
     name: "librmnetctl_pre_uplink",
     module_type: "cc_defaults",
-    config_namespace: "reloadedGlobalVars",
+    config_namespace: "fortuneGlobalVars",
     bool_variables: ["uses_pre_uplink_features_netmgrd"],
     properties: ["cflags"],
 }
@@ -164,7 +110,7 @@ librmnetctl_pre_uplink {
 soong_config_module_type {
     name: "camera_boottime_timestamp",
     module_type: "cc_defaults",
-    config_namespace: "reloadedGlobalVars",
+    config_namespace: "fortuneGlobalVars",
     bool_variables: ["needs_camera_boottime_timestamp"],
     properties: [
         "cflags",

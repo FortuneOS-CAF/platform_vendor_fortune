@@ -1,50 +1,28 @@
-# Copyright (C) 2017 Unlegacy-Android
-# Copyright (C) 2017 The LineageOS Project
-# Copyright (C) 2018 CarbonROM
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
+# Copyright (C) 2024 FortuneOS
 #
-#      http://www.apache.org/licenses/LICENSE-2.0
+# SPDX-License-Identifier: Apache-2.0
 #
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 
-include vendor/reloaded/build/core/colors.mk
+FORTUNE_ZIP_NAME := $(FORTUNE_VERSION).zip
+FORTUNE_TARGET_PACKAGE := $(PRODUCT_OUT)/$(FORTUNE_ZIP_NAME)
 
-RELOADED_ZIP_NAME := $(RELOADED_VERSION).zip
-RELOADED_TARGET_PACKAGE := $(PRODUCT_OUT)/$(RELOADED_ZIP_NAME)
-
-MD5 := prebuilts/build-tools/path/$(HOST_PREBUILT_TAG)/md5sum
-
-.PHONY: reloaded
-reloaded: $(INTERNAL_OTA_PACKAGE_TARGET)
-	@echo "ReloadedOS OTA package"
-	$(hide) mv $(INTERNAL_OTA_PACKAGE_TARGET) $(RELOADED_TARGET_PACKAGE)
-	$(hide) $(MD5) $(RELOADED_TARGET_PACKAGE) > $(RELOADED_TARGET_PACKAGE).md5sum
+.PHONY: fortune
+fortune: $(INTERNAL_OTA_PACKAGE_TARGET)
+	@echo "FortuneOS OTA package"
+	$(hide) mv $(INTERNAL_OTA_PACKAGE_TARGET) $(FORTUNE_TARGET_PACKAGE)
 	@echo ""
-	@echo -e ${CL_LBL}"═══════════════════════════════════════════════════════════════════"${CL_RST}
-	@echo -e ${CL_LBL}"                                                                   "${CL_RST}
-	@echo -e ${CL_LBL}"                                                                   "${CL_RST}
-	@echo -e ${CL_LBL}" ██████╗ ███████╗██╗      ██████╗  █████╗ ██████╗ ███████╗██████╗  "${CL_RST}
-	@echo -e ${CL_LBL}" ██╔══██╗██╔════╝██║     ██╔═══██╗██╔══██╗██╔══██╗██╔════╝██╔══██╗ "${CL_RST}
-	@echo -e ${CL_LBL}" ██████╔╝█████╗  ██║     ██║   ██║███████║██║  ██║█████╗  ██║  ██║ "${CL_RST}
-	@echo -e ${CL_LBL}" ██╔══██╗██╔══╝  ██║     ██║   ██║██╔══██║██║  ██║██╔══╝  ██║  ██║ "${CL_RST}
-	@echo -e ${CL_LBL}" ██║  ██║███████╗███████╗╚██████╔╝██║  ██║██████╔╝███████╗██████╔╝ "${CL_RST}
-	@echo -e ${CL_LBL}" ╚═╝  ╚═╝╚══════╝╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚═════╝ ╚══════╝╚═════╝  "${CL_RST}
-	@echo -e ${CL_LBL}"                                                                   "${CL_RST}
+	@echo "Package Completed:"
 	@echo ""
-	@echo -e ${CL_YLW}"═══════════════════════════════════════════════════════════════════"${CL_RST}
-	@echo -e ${CL_CYN}"Package zip:    "${CL_MAG} $(RELOADED_ZIP_NAME) ${CL_RST}
-	@echo -e ${CL_CYN}"Package folder: "${CL_MAG} $(PRODUCT_OUT) ${CL_RST}
-	@echo -e ${CL_CYN}"Package md5:    "${CL_MAG} $(shell cat $(RELOADED_TARGET_PACKAGE).md5sum | awk '{print $$1}') ${CL_RST}
-	@echo -e ${CL_CYN}"Package size:   "${CL_MAG} $(shell du -h $(RELOADED_TARGET_PACKAGE) | awk '{print $$1}') ${CL_RST}
-	@echo -e ${CL_YLW}"═══════════════════════════════════════════════════════════════════"${CL_RST}
-	@echo -e ""
+	@echo "█▀▀ █▀█ █▀█ ▀█▀ █░█ █▄░█ █▀▀"
+	@echo "█▀░ █▄█ █▀▄ ░█░ █▄█ █░▀█ ██▄"
+	@echo "═══════════════════════════════════════════════════════════════════"
+	@echo "Zip: $(FORTUNE_TARGET_PACKAGE)"
+	@echo "Size: `du -h "$(FORTUNE_TARGET_PACKAGE)" | cut -f1`"
+	@echo "SHA256: `sha256sum $(FORTUNE_TARGET_PACKAGE) | cut -f 1 -d " "`"
+	@echo "MD5: `md5sum $(FORTUNE_TARGET_PACKAGE) | cut -f 1 -d " "`"
+	@echo "═══════════════════════════════════════════════════════════════════"
+	@echo "" >&2
 
 .PHONY: bacon
-bacon: reloaded
+bacon: fortune
