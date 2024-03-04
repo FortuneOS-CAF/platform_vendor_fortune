@@ -1,21 +1,9 @@
 #!/usr/bin/env python3
-# Copyright (C) 2012-2013, The CyanogenMod Project
-# Copyright (C) 2012-2015, SlimRoms Project
-# Copyright (C) 2018, Resurrection Remix
-# Copyright (C) 2019-2021, WaveOS
-# Copyright (C) 2022, ReloadedOS
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
+# Copyright (C) 2024 FortuneOS
 #
-#      http://www.apache.org/licenses/LICENSE-2.0
+# SPDX-License-Identifier: Apache-2.0
 #
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 
 import base64
 import json
@@ -29,41 +17,44 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-custom_local_manifest = ".repo/local_manifests/reloaded.xml"
-custom_default_revision = "r"
-custom_dependencies = "reloaded.dependencies"
-org_manifest = "reloaded"  # leave empty if org is provided in manifest
-org_display = "Reloaded-Temp"  # needed for displaying
+DEBUG = False
 
-default_manifest = ".repo/manifests/default.xml"
-reloaded_manifest = ".repo/manifests/reloaded.xml"
+custom_local_manifest = ".repo/local_manifests/fortune.xml"
+custom_default_revision = "unity"
+custom_default_revision =  os.getenv('ROOMSERVICE_DEFAULT_BRANCH', 'unity')
+custom_dependencies = "fortune.dependencies"
+org_manifest = "Fortune-OS-Devices"  # leave empty if org is provided in manifest
+org_display = "Fortune-OS-Devices"  # needed for displaying
 
-github_token = None
+github_auth = None
+
 
 local_manifests = '.repo/local_manifests'
 if not os.path.exists(local_manifests):
     os.makedirs(local_manifests)
 
+
+def debug(*args, **kwargs):
+    if DEBUG:
+        print(*args, **kwargs)
+
+
 def add_auth(g_req):
-    global github_token
-    if github_token is None:
-        # get token from .netrc if possible
+    global github_auth
+    if github_auth is None:
         try:
             auth = netrc.netrc().authenticators("api.github.com")
-            github_token = auth[2]
         except (netrc.NetrcParseError, IOError):
             auth = None
-    if github_token:
-        g_req.add_header("Authorization", "token %s" % github_token)
+        if auth:
+            github_auth = base64.b64encode(
+                ('%s:%s' % (auth[0], auth[2])).encode()
+            )
+        else:
+            github_auth = ""
+    if github_auth:
+        g_req.add_header("Authorization", "Basic %s" % github_auth)
 
-def exists_in_tree(lm, repository):
-     for child in list(lm):
-        try:
-            if child.attrib['path'].endswith(repository):
-                return child
-        except:
-            pass
-     return None
 
 def indent(elem, level=0):
     # in-place prettyprint formatter
@@ -80,6 +71,7 @@ def indent(elem, level=0):
     else:
         if level and (not elem.tail or not elem.tail.strip()):
             elem.tail = i
+
 
 def get_manifest_path():
     '''Find the current manifest path
@@ -101,10 +93,12 @@ def load_manifest(manifest):
         man = ElementTree.Element("manifest")
     return man
 
+
 def get_default(manifest=None):
     m = manifest or load_manifest(get_manifest_path())
     d = m.findall('default')[0]
     return d
+
 
 def get_remote(manifest=None, remote_name=None):
     m = manifest or load_manifest(get_manifest_path())
@@ -114,6 +108,7 @@ def get_remote(manifest=None, remote_name=None):
     for remote in remotes:
         if remote_name == remote.get('name'):
             return remote
+
 
 def get_revision(manifest=None, p="build"):
     return custom_default_revision
@@ -127,6 +122,7 @@ def get_from_manifest(device_name):
                 return lp
     return None
 
+
 def is_in_manifest(project_path):
     for local_path in load_manifest(custom_local_manifest).findall("project"):
         if local_path.get("path") == project_path:
@@ -136,8 +132,6 @@ def is_in_manifest(project_path):
 
 def add_to_manifest(repos, fallback_branch=None):
     lm = load_manifest(custom_local_manifest)
-    mlm = load_manifest(default_manifest)
-    reloadedm = load_manifest(reloaded_manifest)
 
     for repo in repos:
 
@@ -152,9 +146,11 @@ def add_to_manifest(repos, fallback_branch=None):
             repo_path = repo_name.split('/')[-1]
 
         if 'branch' in repo:
-            repo_branch=repo['branch']
+            repo_branch = repo['branch']
+        elif fallback_branch:
+            repo_branch = fallback_branch
         else:
-            repo_branch=custom_default_revision
+            repo_branch = custom_default_revision
 
         if 'remote' in repo:
             repo_remote=repo['remote']
@@ -164,23 +160,10 @@ def add_to_manifest(repos, fallback_branch=None):
             repo_remote="github"
 
         if is_in_manifest(repo_path):
-            print('%s already exists in the local manifest', repo_path)
+            print('%s already exists in the manifest' % repo_path)
             continue
 
-        existing_m_project = None
-        if exists_in_tree(reloadedm, repo_path) != None:
-            existing_m_project = exists_in_tree(reloadedm, repo_path)
-        elif exists_in_tree(mlm, repo_path) != None:
-            existing_m_project = exists_in_tree(mlm, repo_path)
-
-        if existing_m_project != None:
-            if existing_m_project.attrib['path'] == repo['target_path']:
-                print('%s already exists in main manifest, replacing with new dep' % repo_name)
-                lm.append(ElementTree.Element("remove-project", attrib = {
-                    "name": existing_m_project.attrib['name']
-                }))
-
-        print('Adding dependency:\nRepository: %s\nBranch: %s\nRemote: %s\nPath: %s\n' % (repo_name, repo_branch, repo_remote, repo_path))
+        print('Adding dependency:\nRepository: %s\nBranch: %s\nRemote: %s\nPath: %s\n' % (repo_name, repo_branch,repo_remote, repo_path))
 
         project = ElementTree.Element(
             "project",
@@ -188,6 +171,10 @@ def add_to_manifest(repos, fallback_branch=None):
                     "remote": repo_remote,
                     "name":  repo_name}
         )
+
+        clone_depth = os.getenv('ROOMSERVICE_CLONE_DEPTH')
+        if clone_depth:
+            project.set('clone-depth', clone_depth)
 
         if repo_branch is not None:
             project.set('revision', repo_branch)
@@ -200,7 +187,6 @@ def add_to_manifest(repos, fallback_branch=None):
         if 'clone-depth' in repo:
             print("Setting clone-depth to %s for %s" % (repo['clone-depth'], repo_name))
             project.set('clone-depth', repo['clone-depth'])
-
         lm.append(project)
 
     indent(lm)
@@ -212,6 +198,7 @@ def add_to_manifest(repos, fallback_branch=None):
     f.close()
 
 _fetch_dep_cache = []
+
 
 def fetch_dependencies(repo_path, fallback_branch=None):
     global _fetch_dep_cache
@@ -227,7 +214,7 @@ def fetch_dependencies(repo_path, fallback_branch=None):
             dependencies = json.load(dep_f)
     else:
         dependencies = {}
-        print('%s has no additional dependencies.' % repo_path)
+        debug('Dependencies file not found, bailing out.')
 
     fetch_list = []
     syncable_repos = []
@@ -235,8 +222,9 @@ def fetch_dependencies(repo_path, fallback_branch=None):
     for dependency in dependencies:
         if not is_in_manifest(dependency['target_path']):
             if not dependency.get('branch'):
-                dependency['branch'] = (get_revision() or
-                                        custom_default_revision)
+                dependency['branch'] = (
+                    fallback_branch or get_revision() or custom_default_revision
+                )
 
             fetch_list.append(dependency)
             syncable_repos.append(dependency['target_path'])
@@ -249,13 +237,15 @@ def fetch_dependencies(repo_path, fallback_branch=None):
 
     if syncable_repos:
         print('Syncing dependencies')
-        os.system('repo sync -c -q --force-sync --optimized-fetch --no-tags --no-clone-bundle --prune -j%d %s' % (os.cpu_count(), ' '.join(syncable_repos)))
+        os.system('repo sync --force-sync --no-tags --current-branch --no-clone-bundle %s' % ' '.join(syncable_repos))
 
     for deprepo in syncable_repos:
         fetch_dependencies(deprepo)
 
+
 def has_branch(branches, revision):
     return revision in (branch['name'] for branch in branches)
+
 
 def detect_revision(repo):
     """
@@ -292,11 +282,16 @@ def detect_revision(repo):
           "specify a list of fallback branches.")
     sys.exit()
 
+
 def main():
+    global DEBUG
     try:
         depsonly = bool(sys.argv[2] in ['true', 1])
     except IndexError:
         depsonly = False
+
+    if os.getenv('ROOMSERVICE_DEBUG'):
+        DEBUG = True
 
     product = sys.argv[1]
     device = product[product.find("_") + 1:] or product
