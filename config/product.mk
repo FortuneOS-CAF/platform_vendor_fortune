@@ -50,7 +50,7 @@ SYSTEMUI_OPTIMIZE_JAVA ?= true
 PRODUCT_PACKAGES += initial-package-stopped-states-aosp.xml
 
 # Face Unlock
-TARGET_FACE_UNLOCK_SUPPORTED ?= true
+TARGET_FACE_UNLOCK_SUPPORTED ?= false
 
 ifeq ($(TARGET_FACE_UNLOCK_SUPPORTED),true)
 PRODUCT_PACKAGES += \
