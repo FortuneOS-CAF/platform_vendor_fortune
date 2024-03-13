@@ -5,6 +5,7 @@
 #
 
 # FortuneOS
+$(call inherit-product, vendor/fortune/config/keepers.mk)
 $(call inherit-product, vendor/fortune/config/packages.mk)
 $(call inherit-product, vendor/fortune/config/properties.mk)
 $(call inherit-product, vendor/fortune/config/version.mk)
