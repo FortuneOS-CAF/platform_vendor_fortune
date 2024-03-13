@@ -24,6 +24,13 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     ImmersiveNavigationOverlay
 
+# OTA
+PRODUCT_PACKAGES += \
+    Updater
+
+PRODUCT_COPY_FILES += \
+    vendor/fortune/prebuilt/etc/init/init.fortune-updater.rc:$(TARGET_COPY_OUT_SYSTEM_EXT)/etc/init/init.fortune-updater.rc
+
 # Sensors
 PRODUCT_PACKAGES += \
     android.frameworks.sensorservice@1.0.vendor
