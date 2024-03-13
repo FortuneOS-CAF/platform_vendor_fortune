@@ -5,10 +5,12 @@
 #
 
 # FortuneOS
-$(call inherit-product, vendor/fortune/config/bootanimation.mk)
 $(call inherit-product, vendor/fortune/config/packages.mk)
 $(call inherit-product, vendor/fortune/config/properties.mk)
 $(call inherit-product, vendor/fortune/config/version.mk)
+
+# Addons
+$(call inherit-product, vendor/addons/config.mk)
 
 # Qualcomm Common configuration
 $(call inherit-product, device/qcom/common/common.mk)
@@ -59,23 +61,6 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.biometrics.face.xml:$(TARGET_COPY_OUT_SYSTEM)/etc/permissions/android.hardware.biometrics.face.xml
 endif
-
-# Fonts
-PRODUCT_COPY_FILES += \
-    $(call find-copy-subdir-files,*,vendor/fortune/prebuilt/fonts/,$(TARGET_COPY_OUT_PRODUCT)/fonts) \
-    vendor/fortune/prebuilt/etc/fonts_customization.xml:$(TARGET_COPY_OUT_PRODUCT)/etc/fonts_customization.xml
-
-PRODUCT_PACKAGES += \
-    FontGoogleSansLatoOverlay \
-    FontHarmonySansOverlay \
-    FontInterOverlay \
-    FontManropeOverlay \
-    FontOnePlusOverlay \
-    FontOppoSansOverlay \
-    FontRobotoOverlay \
-    FontUrbanistOverlay
-
-$(call inherit-product-if-exists, external/google-fonts/lato/fonts.mk)
 
 # Inherit from GMS product config
 $(call inherit-product-if-exists, vendor/google/gms/config.mk)
