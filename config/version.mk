@@ -10,6 +10,14 @@ FORTUNE_REVISION := 1.0
 FORTUNE_CODENAME := Unicorn
 FORTUNE_BUILD_DATE := $(shell date +"%d%m%Y-%H%M")
 
+ifeq ($(FORTUNE_BUILD_TYPE),COMMUNITY)
+PRODUCT_PACKAGES += \
+    Updater
+
+PRODUCT_COPY_FILES += \
+    vendor/fortune/prebuilt/etc/init/init.fortune-updater.rc:$(TARGET_COPY_OUT_SYSTEM_EXT)/etc/init/init.fortune-updater.rc
+endif
+
 FORTUNE_VERSION := FRTN.CLO-v$(FORTUNE_REVISION)-$(FORTUNE_BUILD)-$(FORTUNE_BUILD_TYPE)-$(FORTUNE_BUILD_DATE)
 
 PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
