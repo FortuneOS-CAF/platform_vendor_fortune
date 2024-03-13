@@ -78,14 +78,8 @@ PRODUCT_PACKAGES += \
 $(call inherit-product-if-exists, external/google-fonts/lato/fonts.mk)
 
 # Inherit from GMS product config
-WITH_GMS := true
-ifeq ($(TARGET_USES_FULL_GAPPS),true)
-$(call inherit-product, vendor/gms/gms_full.mk)
-else ifeq ($(TARGET_USES_PICO_GAPPS),true)
-$(call inherit-product, vendor/gms/gms_pico.mk)
-else
-$(call inherit-product, vendor/gms/gms_mini.mk)
-endif
+$(call inherit-product-if-exists, vendor/google/gms/config.mk)
+$(call inherit-product-if-exists, vendor/google/pixel/config.mk)
 
 # Permissions
 PRODUCT_COPY_FILES += \
