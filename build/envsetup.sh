@@ -3,6 +3,7 @@ cat <<EOF
 Additional functions:
 - mka:             Builds using all available CPUs
 - brunch:          Lunch + mka in one command
+- blobs_deps:      Get blobs dependencies
 - getfortune:      Lunch + mka in one command
 - sort-blobs-list: Sort proprietary-files.txt sections with LC_ALL=C.
 EOF
@@ -41,6 +42,10 @@ function getfortune()
 function sort-blobs-list() {
     T=$(gettop)
     $T/tools/extract-utils/sort-blobs-list.py $@
+}
+
+function blobs_deps() {
+    readelf -d "$1" | grep "\(NEEDED\)" | sed -r "s/.*\[(.*)\]/\1/"
 }
 
 export SKIP_ABI_CHECKS="true"
