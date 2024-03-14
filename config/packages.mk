@@ -81,6 +81,10 @@ PRODUCT_PACKAGES += \
     libvndfwk_detect_jni.qti \
     libvndfwk_detect_jni.qti.vendor
 
+# Black theme
+PRODUCT_PACKAGES += \
+    BlackThemeOverlay
+
 # WiFi
 PRODUCT_PACKAGES += \
     libwpa_client
