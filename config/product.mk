@@ -64,8 +64,14 @@ PRODUCT_COPY_FILES += \
 endif
 
 # Inherit from GMS product config
-$(call inherit-product-if-exists, vendor/google/gms/config.mk)
-$(call inherit-product-if-exists, vendor/google/pixel/config.mk)
+WITH_GMS := true
+ifeq ($(TARGET_USES_FULL_GAPPS),true)
+$(call inherit-product, vendor/gms/gms_full.mk)
+else ifeq ($(TARGET_USES_PICO_GAPPS),true)
+$(call inherit-product, vendor/gms/gms_pico.mk)
+else
+$(call inherit-product, vendor/gms/gms_mini.mk)
+endif
 
 # Permissions
 PRODUCT_COPY_FILES += \
