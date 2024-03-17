@@ -26,5 +26,6 @@ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
     org.fortune.build.type=$(FORTUNE_BUILD_TYPE) \
     org.fortune.codename=$(FORTUNE_CODENAME) \
     org.fortune.device=$(FORTUNE_BUILD) \
+    org.fortune.fullver=v$(FORTUNE_REVISION)-$(FORTUNE_CODENAME) \
     org.fortune.revision=$(FORTUNE_REVISION) \
     org.fortune.version=$(FORTUNE_VERSION)
