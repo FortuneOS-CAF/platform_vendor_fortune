@@ -60,23 +60,6 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.biometrics.face.xml:$(TARGET_COPY_OUT_SYSTEM)/etc/permissions/android.hardware.biometrics.face.xml
 endif
 
-# Fonts
-PRODUCT_COPY_FILES += \
-    $(call find-copy-subdir-files,*,vendor/fortune/prebuilt/fonts/,$(TARGET_COPY_OUT_PRODUCT)/fonts) \
-    vendor/fortune/prebuilt/etc/fonts_customization.xml:$(TARGET_COPY_OUT_PRODUCT)/etc/fonts_customization.xml
-
-PRODUCT_PACKAGES += \
-    FontGoogleSansLatoOverlay \
-    FontHarmonySansOverlay \
-    FontInterOverlay \
-    FontManropeOverlay \
-    FontOnePlusOverlay \
-    FontOppoSansOverlay \
-    FontRobotoOverlay \
-    FontUrbanistOverlay
-
-$(call inherit-product-if-exists, external/google-fonts/lato/fonts.mk)
-
 # Permissions
 PRODUCT_COPY_FILES += \
     vendor/fortune/prebuilt/etc/permissions/default_permissions_com.google.android.deskclock.xml:$(TARGET_COPY_OUT_PRODUCT)/etc/default-permissions/default_permissions_com.google.android.deskclock.xml
