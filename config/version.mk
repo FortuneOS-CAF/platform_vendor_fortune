@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-CLO_REVISION := LA.QSSI.14.0.r1-13100-qssi.0
+CLO_REVISION := LA.QSSI.14.0.r1-13500-qssi.0
 
 FORTUNE_REVISION := 1.0
 FORTUNE_CODENAME := Urginea
