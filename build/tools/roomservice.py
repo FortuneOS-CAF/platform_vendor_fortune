@@ -20,8 +20,8 @@ import urllib.request
 DEBUG = False
 
 custom_local_manifest = ".repo/local_manifests/fortune.xml"
-custom_default_revision = "unity"
-custom_default_revision =  os.getenv('ROOMSERVICE_DEFAULT_BRANCH', 'unity')
+custom_default_revision = "udc"
+custom_default_revision =  os.getenv('ROOMSERVICE_DEFAULT_BRANCH', 'udc')
 custom_dependencies = "fortune.dependencies"
 org_manifest = "Fortune-OS-Devices"  # leave empty if org is provided in manifest
 org_display = "Fortune-OS-Devices"  # needed for displaying
