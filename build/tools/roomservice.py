@@ -1,71 +1,82 @@
 #!/usr/bin/env python3
-#
-# Copyright (C) 2024 FortuneOS
-#
-# SPDX-License-Identifier: Apache-2.0
-#
 
-import base64
+# Copyright (C) 2013 Cybojenix <anthonydking@gmail.com>
+# Copyright (C) 2013 The OmniROM Project
+# Copyright (C) 2020 Nicholas Christian  <ndchristian@gmail.com> & The StatiXOS Project
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
 import json
-import netrc
 import os
+import os.path
+import re
+import subprocess
 import sys
-
+import urllib.request
 from xml.etree import ElementTree
 
-import urllib.error
-import urllib.parse
-import urllib.request
 
-DEBUG = False
+PRODUCT = sys.argv[1]
+BRANCH = "udc"
+ORGANIZATION_NAME = "Fortune-OS-Devices"
+DEPENDENCIES_FILE_NAME = "fortune.dependencies"
+LOCAL_MANIFESTS_PATH = ".repo/local_manifests/"
+LOCAL_MANIFESTS_FILE_NAME = "local_manifest.xml"
+CUSTOM_MANIFEST_NAME = "fortune.xml"
 
-custom_local_manifest = ".repo/local_manifests/fortune.xml"
-custom_default_revision = "udc"
-custom_default_revision =  os.getenv('ROOMSERVICE_DEFAULT_BRANCH', 'udc')
-custom_dependencies = "fortune.dependencies"
-org_manifest = "Fortune-OS-Devices"  # leave empty if org is provided in manifest
-org_display = "Fortune-OS-Devices"  # needed for displaying
+if len(sys.argv) > 2:
+    DEPSONLY = sys.argv[2]
+else:
+    DEPSONLY = None
 
-github_auth = None
-
-
-local_manifests = '.repo/local_manifests'
-if not os.path.exists(local_manifests):
-    os.makedirs(local_manifests)
-
-
-def debug(*args, **kwargs):
-    if DEBUG:
-        print(*args, **kwargs)
+try:
+    DEVICE = PRODUCT[PRODUCT.index("_") + 1:]
+except ValueError:
+    DEVICE = sys.argv[1]
 
 
-def add_auth(g_req):
-    global github_auth
-    if github_auth is None:
-        try:
-            auth = netrc.netrc().authenticators("api.github.com")
-        except (netrc.NetrcParseError, IOError):
-            auth = None
-        if auth:
-            github_auth = base64.b64encode(
-                ('%s:%s' % (auth[0], auth[2])).encode()
-            )
-        else:
-            github_auth = ""
-    if github_auth:
-        g_req.add_header("Authorization", "Basic %s" % github_auth)
+def exists_in_tree(lm, repo):
+    """ Checks if the repository exists in the tree. """
+    for child in lm.iter("project"):
+        if child.attrib["path"].endswith(repo):
+            return child
+
+
+def get_primary_remote():
+    """ Finds the primary custom remote fetch. """
+    try:
+        lm = ElementTree.parse(f".repo/manifests/{CUSTOM_MANIFEST_NAME}")
+        lm = lm.getroot()
+    except ElementTree.ParseError:
+        lm = ElementTree.Element("manifest")
+    for remote in lm.iter("remote"):
+        if ORGANIZATION_NAME in remote.attrib["fetch"]:
+            return remote.attrib["name"]
+    return None
 
 
 def indent(elem, level=0):
-    # in-place prettyprint formatter
-    i = "\n" + "  " * level
-    if len(elem):
+    """ In-place pretty print formatter. """
+    i = "\n" + level * "  "
+    if elem:
         if not elem.text or not elem.text.strip():
             elem.text = i + "  "
         if not elem.tail or not elem.tail.strip():
             elem.tail = i
-        for elem in elem:
-            indent(elem, level+1)
+        for element in elem:
+            indent(element, level + 1)
         if not elem.tail or not elem.tail.strip():
             elem.tail = i
     else:
@@ -73,286 +84,202 @@ def indent(elem, level=0):
             elem.tail = i
 
 
-def get_manifest_path():
-    '''Find the current manifest path
-    In old versions of repo this is at .repo/manifest.xml
-    In new versions, .repo/manifest.xml includes an include
-    to some arbitrary file in .repo/manifests'''
-
-    m = ElementTree.parse(".repo/manifest.xml")
+def get_from_manifest():
+    """ Gets a repository path from the manifest. """
     try:
-        m.findall('default')[0]
-        return '.repo/manifest.xml'
-    except IndexError:
-        return ".repo/manifests/{}".format(m.find("include").get("name"))
+        lm = ElementTree.parse(f"{LOCAL_MANIFESTS_PATH}{LOCAL_MANIFESTS_FILE_NAME}")
+        lm = lm.getroot()
+    except ElementTree.ParseError:
+        lm = ElementTree.Element("manifest")
 
-def load_manifest(manifest):
+    for local_path in lm.findall("project"):
+        if re.search(f"device_.*_{DEVICE}$", local_path.get("name")):
+            return local_path.get("path")
+
+    try:  # Devices originally from AOSP are in the main manifest
+        mm = ElementTree.parse(".repo/manifest.xml")
+        mm = mm.getroot()
+    except ElementTree.ParseError:
+        mm = ElementTree.Element("manifest")
+
+    for local_path in mm.findall("project"):
+        if re.search(f"device_.*_{DEVICE}$", local_path.get("name")):
+            return local_path.get("path")
+
+
+def is_in_manifest(repo_name, branch, path):
+    """ Checks if a repository is in the manifest. """
     try:
-        man = ElementTree.parse(manifest).getroot()
-    except (IOError, ElementTree.ParseError):
-        man = ElementTree.Element("manifest")
-    return man
+        lm = ElementTree.parse(f"{LOCAL_MANIFESTS_PATH}{LOCAL_MANIFESTS_FILE_NAME}")
+        lm = lm.getroot()
+    except ElementTree.ParseError:
+        lm = ElementTree.Element("manifest")
 
-
-def get_default(manifest=None):
-    m = manifest or load_manifest(get_manifest_path())
-    d = m.findall('default')[0]
-    return d
-
-
-def get_remote(manifest=None, remote_name=None):
-    m = manifest or load_manifest(get_manifest_path())
-    if not remote_name:
-        remote_name = get_default(manifest=m).get('remote')
-    remotes = m.findall('remote')
-    for remote in remotes:
-        if remote_name == remote.get('name'):
-            return remote
-
-
-def get_revision(manifest=None, p="build"):
-    return custom_default_revision
-
-def get_from_manifest(device_name):
-    if os.path.exists(custom_local_manifest):
-        man = load_manifest(custom_local_manifest)
-        for local_path in man.findall("project"):
-            lp = local_path.get("path").strip('/')
-            if lp.startswith("device/") and lp.endswith("/" + device_name):
-                return lp
-    return None
-
-
-def is_in_manifest(project_path):
-    for local_path in load_manifest(custom_local_manifest).findall("project"):
-        if local_path.get("path") == project_path:
+    for local_path in lm.findall("project"):
+        if (local_path.get("name") == repo_name and local_path.get("revision") == branch) or local_path.get("path") == path:
             return True
-    return False
 
 
-def add_to_manifest(repos, fallback_branch=None):
-    lm = load_manifest(custom_local_manifest)
-
+def add_dependencies(repos, is_initial_fetch):
+    """ Adds repositories to local manifest. """
+    try:
+        lm = ElementTree.parse(f"{LOCAL_MANIFESTS_PATH}{LOCAL_MANIFESTS_FILE_NAME}")
+        lm = lm.getroot()
+    except ElementTree.ParseError:
+        lm = ElementTree.Element("manifest")
     for repo in repos:
-
-        if 'repository' not in repo: # Remove repo if the name isn't set
-            print('Error adding %s', repo)
-            del repos[repo]
-            continue
-        repo_name = repo['repository']
-        if 'target_path' in repo:
-            repo_path = repo['target_path']
-        else: # If path isn't set, its the same as name
-            repo_path = repo_name.split('/')[-1]
-
-        if 'branch' in repo:
-            repo_branch = repo['branch']
-        elif fallback_branch:
-            repo_branch = fallback_branch
+        repo_name = repo["repository"]
+        repo_target = repo["target_path"]
+        existing_project = exists_in_tree(lm, repo_target)
+        if existing_project:
+            if existing_project.attrib["name"] != repo["repository"] and not is_initial_fetch:
+                print(f"Updating dependency {repo_name}")
+                existing_project.set("name", repo["repository"])
+            if existing_project.attrib["revision"] == repo["branch"]:
+                print(f"{ORGANIZATION_NAME}/{repo_name} already exists")
+            else:
+                print(f"Updating branch for {repo_name} to {repo['branch']}")
+                existing_project.set("revision", repo["branch"])
+                if is_initial_fetch:
+                    continue
         else:
-            repo_branch = custom_default_revision
+            if repo["branch"] == BRANCH and "remote" not in repo:
+                repo["remote"] = "Fortune-OS-Devices"
+            if is_initial_fetch:
+                repo["remote"] = get_primary_remote()
+            if "remote" not in repo:
+                repo["remote"] = "github"
+            print(f"Adding dependency: {repo_name} -> {repo_target}")
+            project = ElementTree.Element(
+                "project",
+                attrib={
+                    "path": repo_target,
+                    "remote": repo["remote"],
+                    "name": repo_name,
+                    "revision": BRANCH,
+                },
+            )
+            if "branch" in repo:
+                project.set("revision", repo["branch"])
 
-        if 'remote' in repo:
-            repo_remote=repo['remote']
-        elif "/" not in repo_name:
-            repo_remote=org_manifest
-        elif "/" in repo_name:
-            repo_remote="github"
+            lm.append(project)
 
-        if is_in_manifest(repo_path):
-            print('%s already exists in the manifest' % repo_path)
-            continue
-
-        print('Adding dependency:\nRepository: %s\nBranch: %s\nRemote: %s\nPath: %s\n' % (repo_name, repo_branch,repo_remote, repo_path))
-
-        project = ElementTree.Element(
-            "project",
-            attrib={"path": repo_path,
-                    "remote": repo_remote,
-                    "name":  repo_name}
-        )
-
-        clone_depth = os.getenv('ROOMSERVICE_CLONE_DEPTH')
-        if clone_depth:
-            project.set('clone-depth', clone_depth)
-
-        if repo_branch is not None:
-            project.set('revision', repo_branch)
-        elif fallback_branch:
-            print("Using branch %s for %s" %
-                  (fallback_branch, repo_name))
-            project.set('revision', fallback_branch)
-        else:
-            print("Using default branch for %s" % repo_name)
-        if 'clone-depth' in repo:
-            print("Setting clone-depth to %s for %s" % (repo['clone-depth'], repo_name))
-            project.set('clone-depth', repo['clone-depth'])
-        lm.append(project)
-
-    indent(lm)
-    raw_xml = "\n".join(('<?xml version="1.0" encoding="UTF-8"?>',
-                         ElementTree.tostring(lm).decode()))
-
-    f = open(custom_local_manifest, 'w')
-    f.write(raw_xml)
-    f.close()
-
-_fetch_dep_cache = []
+    indent(lm, 0)
+    raw_xml = "\n".join(
+        ('<?xml version="1.0" encoding="UTF-8"?>', ElementTree.tostring(lm).decode(),)
+    )
+    with open(f"{LOCAL_MANIFESTS_PATH}{LOCAL_MANIFESTS_FILE_NAME}", "w") as f:
+        f.write(raw_xml)
 
 
-def fetch_dependencies(repo_path, fallback_branch=None):
-    global _fetch_dep_cache
-    if repo_path in _fetch_dep_cache:
-        return
-    _fetch_dep_cache.append(repo_path)
-
-    print('Looking for dependencies')
-
-    dep_p = '/'.join((repo_path, custom_dependencies))
-    if os.path.exists(dep_p):
-        with open(dep_p) as dep_f:
-            dependencies = json.load(dep_f)
-    else:
-        dependencies = {}
-        debug('Dependencies file not found, bailing out.')
-
-    fetch_list = []
+def fetch_dependencies(repo_path):
+    """ Adds repos that are in the dependency file to the manifest, and syncs them. """
     syncable_repos = []
+    verify_repos = []
 
-    for dependency in dependencies:
-        if not is_in_manifest(dependency['target_path']):
-            if not dependency.get('branch'):
-                dependency['branch'] = (
-                    fallback_branch or get_revision() or custom_default_revision
-                )
+    dependencies_path = f"{repo_path}/{DEPENDENCIES_FILE_NAME}"
 
-            fetch_list.append(dependency)
-            syncable_repos.append(dependency['target_path'])
-        else:
-            print("Dependency already present in manifest: %s => %s" % (dependency['repository'], dependency['target_path']))
-
-    if fetch_list:
-        print('Adding dependencies to manifest\n')
-        add_to_manifest(fetch_list, fallback_branch)
+    print(f"Looking for dependencies in {repo_path}")
+    if os.path.exists(dependencies_path):
+        with open(dependencies_path, "r") as dependencies_file:
+            dependencies = json.loads(dependencies_file.read())
+            fetch_list = []
+            for dependency in dependencies:
+                if "branch" not in dependency:
+                    dependency["branch"] = BRANCH
+                if not is_in_manifest(dependency["repository"], dependency["branch"], dependency["target_path"]):
+                    fetch_list.append(dependency)
+                    syncable_repos.append(dependency["target_path"])
+                    verify_repos.append(dependency["target_path"])
+                elif re.search("device_.*_.*$", dependency["repository"]):
+                    verify_repos.append(dependency["target_path"])
+            if fetch_list:
+                print("Adding dependencies to manifest")
+                add_dependencies(fetch_list, False)
+    else:
+        print("Dependencies file not found, bailing out.")
 
     if syncable_repos:
-        print('Syncing dependencies')
-        os.system('repo sync --force-sync --no-tags --current-branch --no-clone-bundle %s' % ' '.join(syncable_repos))
+        print("Syncing dependencies")
+        sync_command = f"repo sync --force-sync --no-clone-bundle --current-branch --no-tags -j8 {' '.join(syncable_repos)}".split()
+        subprocess.run(sync_command, check=False)
 
-    for deprepo in syncable_repos:
-        fetch_dependencies(deprepo)
-
-
-def has_branch(branches, revision):
-    return revision in (branch['name'] for branch in branches)
+    for device_dependencies in verify_repos:
+        fetch_dependencies(device_dependencies)
 
 
-def detect_revision(repo):
+def get_repositories():
     """
-    returns None if using the default revision, else return
-    the branch name if using a different revision
+    Retrieves all repositories from a project.
+    If there is not an API token, then requests may be rate-limited.
     """
-    print("Checking branch info")
-    githubreq = urllib.request.Request(
-        repo['branches_url'].replace('{/branch}', ''))
-    add_auth(githubreq)
-    result = json.loads(urllib.request.urlopen(githubreq).read().decode())
+    page = 1
+    repositories = []
+    while True:
+        request = urllib.request.Request(
+            f"https://api.github.com/users/{ORGANIZATION_NAME}/repos?page={page:d}"
+        )
+        token_file = f"{os.getenv('HOME')}/api_token"
+        if os.path.isfile(token_file):
+            with open(token_file, "r") as file_contents:
+                token = file_contents.readline()
+                request.add_header("Authorization", f"token {token.strip()}")
 
-    calc_revision = get_revision()
-    print("Calculated revision: %s" % calc_revision)
+        response = urllib.request.urlopen(request).read().decode()
+        result = json.loads(response)
 
-    if has_branch(result, calc_revision):
-        return calc_revision
-
-    fallbacks = os.getenv('ROOMSERVICE_BRANCHES', '').split()
-    for fallback in fallbacks:
-        if has_branch(result, fallback):
-            print("Using fallback branch: %s" % fallback)
-            return fallback
-
-    if has_branch(result, custom_default_revision):
-        print("Falling back to custom revision: %s"
-              % custom_default_revision)
-        return custom_default_revision
-
-    print("Branches found:")
-    for branch in result:
-        print(branch['name'])
-    print("Use the ROOMSERVICE_BRANCHES environment variable to "
-          "specify a list of fallback branches.")
-    sys.exit()
+        if result:
+            repositories += result
+            page += 1
+        else:
+            break
+    return repositories
 
 
 def main():
-    global DEBUG
-    try:
-        depsonly = bool(sys.argv[2] in ['true', 1])
-    except IndexError:
-        depsonly = False
+    """
+    Entry point. Creates a local manifest directory and/or local manifest file if there isn't one,
+    then creates a local manifest and repo syncs.
+     """
 
-    if os.getenv('ROOMSERVICE_DEBUG'):
-        DEBUG = True
+    if not os.path.isdir(LOCAL_MANIFESTS_PATH):
+        os.makedirs(LOCAL_MANIFESTS_PATH)
+    if not os.path.isfile(f"{LOCAL_MANIFESTS_PATH}{LOCAL_MANIFESTS_FILE_NAME}"):
+        with open(f"{LOCAL_MANIFESTS_PATH}{LOCAL_MANIFESTS_FILE_NAME}", "w"):
+            pass
 
-    product = sys.argv[1]
-    device = product[product.find("_") + 1:] or product
+    if not DEPSONLY:
+        print(
+            f"Device {DEVICE} not found. "
+            f"Attempting to retrieve device repository from {ORGANIZATION_NAME} "
+            f"Github (http://github.com/{ORGANIZATION_NAME})."
+        )
 
-    if depsonly:
-        repo_path = get_from_manifest(device)
-        if repo_path:
-            fetch_dependencies(repo_path)
-        else:
-            print("Trying dependencies-only mode on a "
-                  "non-existing device tree?")
-        sys.exit()
-
-    print("Device {0} not found. Attempting to retrieve device repository from "
-          "{1} Github (http://github.com/{1}).".format(device, org_display))
-
-    githubreq = urllib.request.Request(
-        "https://api.github.com/search/repositories?"
-        "q={0}+user:{1}+in:name+fork:true".format(device, org_display))
-    add_auth(githubreq)
-
-    repositories = []
-
-    try:
-        result = json.loads(urllib.request.urlopen(githubreq).read().decode())
-    except urllib.error.URLError:
-        print("Failed to search GitHub")
-        sys.exit()
-    except ValueError:
-        print("Failed to parse return data from GitHub")
-        sys.exit()
-    for res in result.get('items', []):
-        repositories.append(res)
-
-    for repository in repositories:
-        repo_name = repository['name']
-
-        if not (repo_name.startswith("device_") and
-                repo_name.endswith("_" + device)):
-            continue
-        print("Found repository: %s" % repository['name'])
-
-        fallback_branch = detect_revision(repository)
-        manufacturer = repo_name[7:-(len(device)+1)]
-        repo_path = "device/%s/%s" % (manufacturer, device)
-        adding = [{'repository': repo_name, 'target_path': repo_path}]
-
-        add_to_manifest(adding, fallback_branch)
-
-        print("Syncing repository to retrieve project.")
-        os.system('repo sync --force-sync --no-tags --current-branch --no-clone-bundle %s' % repo_path)
-        print("Repository synced!")
-
-        fetch_dependencies(repo_path, fallback_branch)
-        print("Done")
-        sys.exit()
-
-    print("Repository for %s not found in the %s Github repository list."
-          % (device, org_display))
-    print("If this is in error, you may need to manually add it to your "
-          "%s" % custom_local_manifest)
-
-if __name__ == "__main__":
-    main()
+    for repository in get_repositories():
+        repository_name = repository["name"]
+        if repository_name.startswith("device_") and repository_name.endswith(
+            "_" + DEVICE
+        ):
+            print(f"Found repository: {repository['name']}")
+            manufacturer = repository_name.replace("device_", "").replace(
+                "_{0}".format(DEVICE), ""
+            )
+            repository_path = f"device/{manufacturer}/{DEVICE}"
+            if not DEPSONLY:
+                add_dependencies(
+                    [
+                        {
+                            "repository": repository_name,
+                            "target_path": repository_path,
+                            "branch": BRANCH,
+                        }
+                    ],
+                    True
+                )
+                print("Syncing repository to retrieve project.")
+                subprocess.run(
+                    ["repo", "sync", "--force-sync", "--no-tag", "--no-clone-bundle", repository_path], check=False,
+                )
+            fetch_dependencies(repository_path)
+            print("Done")
+main()
