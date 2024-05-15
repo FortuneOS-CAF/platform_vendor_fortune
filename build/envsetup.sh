@@ -54,17 +54,25 @@ function sort-blobs-list() {
 
 export SKIP_ABI_CHECKS="true"
 
-if [ -z ${CCACHE_EXEC} ]; then
-    ccache_path=$(which ccache)
-    if [ ! -z "$ccache_path" ]; then
-	export USE_CCACHE=1
-        export CCACHE_EXEC="$ccache_path"
-        if [ -z ${CCACHE_DIR} ]; then
-            export CCACHE_DIR=${HOME}/.ccache
+# check and set ccache path on envsetup
+if [ -z "${CCACHE_EXEC}" ]; then
+    if command -v ccache &>/dev/null; then
+        export USE_CCACHE=1
+        export CCACHE_EXEC=$(command -v ccache)
+        [ -z "${CCACHE_DIR}" ] && export CCACHE_DIR="$HOME/.ccache"
+        echo "ccache directory found, CCACHE_DIR set to: $CCACHE_DIR" >&2
+        CCACHE_MAXSIZE="${CCACHE_MAXSIZE:-40G}"
+        DIRECT_MODE="${DIRECT_MODE:-false}"
+        $CCACHE_EXEC -o compression=true -o direct_mode="${DIRECT_MODE}" -M "${CCACHE_MAXSIZE}" \
+            && echo "ccache enabled, CCACHE_EXEC set to: $CCACHE_EXEC, CCACHE_MAXSIZE set to: $CCACHE_MAXSIZE, direct_mode set to: $DIRECT_MODE" >&2 \
+            || echo "Warning: Could not set cache size limit. Please check ccache configuration." >&2
+        CURRENT_CCACHE_SIZE=$(du -sh "$CCACHE_DIR" 2>/dev/null | cut -f1)
+        if [ -n "$CURRENT_CCACHE_SIZE" ]; then
+            echo "Current ccache size is: $CURRENT_CCACHE_SIZE" >&2
+        else
+            echo "No cached files in ccache." >&2
         fi
-        $ccache_path -o compression=true
-	echo -e "\e[1mccache enabled and \e[32m\e[4mCCACHE_EXEC\e[0m \e[1mhas been set to : \e[4m$ccache_path\e[0m"
     else
-        echo -e "\e[31m\e[1mccache not found/installed!\e[0m"
+        echo "Error: ccache not found. Please install ccache." >&2
     fi
 fi
