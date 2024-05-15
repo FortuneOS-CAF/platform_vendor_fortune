@@ -3,6 +3,7 @@ cat <<EOF
 Additional functions:
 - mka:             Builds using all available CPUs
 - brunch:          Lunch + mka in one command
+- clomerge:        Utility to merge CLO tags.
 - getfortune:      Lunch + mka in one command
 - sort-blobs-list: Sort proprietary-files.txt sections with LC_ALL=C.
 EOF
@@ -36,6 +37,14 @@ function getfortune()
         return 1
     fi
     return $?
+}
+
+function clomerge()
+{
+    target_branch=$1
+    set_stuff_for_environment
+    T=$(gettop)
+    python3 $T/vendor/fortune/build/tools/merge-clo.py $target_branch
 }
 
 function sort-blobs-list() {
