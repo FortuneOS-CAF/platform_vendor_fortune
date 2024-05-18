@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-CLO_REVISION := LA.QSSI.14.0.r1-14700-qssi.0
+CLO_REVISION := LA.QSSI.14.0.r1-14900-qssi.0
 
 FORTUNE_REVISION := 14.0
 FORTUNE_CODENAME := Usagi
