@@ -19,6 +19,12 @@ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
    org.fortune.keeper=$(FORTUNE_KEEPER)
 endif
 
+ifeq ($(SIGN_BUILD),true)
+include vendor/fortune-priv/keys/keys.mk
+FORTUNE_VERSION := \
+    IDN.FRTN.CLO.$(FORTUNE_REVISION)-$(FORTUNE_CODENAME)-$(FORTUNE_BUILD)-$(FORTUNE_BUILD_TYPE)-$(FORTUNE_BUILD_DATE).signed
+endif
+
 PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
     org.clo.revision=$(CLO_REVISION) \
     org.fortune.build.date=$(FORTUNE_BUILD_DATE) \
