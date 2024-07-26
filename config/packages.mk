@@ -5,12 +5,11 @@
 #
 
 # FortuneOS
+include vendor/fortune/extras/config.mk
+
 PRODUCT_PACKAGES += \
     Launcher3QuickStep \
     ThemePicker
-
-# Fonts
-include vendor/fortune/config/fonts.mk
 
 # Gestures
 PRODUCT_PACKAGES += \
@@ -29,10 +28,6 @@ endif
 # Charger mode images
 PRODUCT_PACKAGES += \
     charger_res_images
-
-# Immersive Navigation
-PRODUCT_PACKAGES += \
-    ImmersiveNavigationOverlay
 
 # OTA
 PRODUCT_PACKAGES += \
@@ -100,10 +95,6 @@ PRODUCT_PACKAGES += \
     libqti_vndfwk_detect.vendor \
     libvndfwk_detect_jni.qti \
     libvndfwk_detect_jni.qti.vendor
-
-# Black theme
-PRODUCT_PACKAGES += \
-    BlackThemeOverlay
 
 # WiFi
 PRODUCT_PACKAGES += \

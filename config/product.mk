@@ -5,7 +5,6 @@
 #
 
 # FortuneOS
-$(call inherit-product, vendor/fortune/config/bootanimation.mk)
 $(call inherit-product, vendor/fortune/config/packages.mk)
 $(call inherit-product, vendor/fortune/config/properties.mk)
 $(call inherit-product, vendor/fortune/config/version.mk)
