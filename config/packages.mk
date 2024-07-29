@@ -7,10 +7,6 @@
 # FortuneOS
 include vendor/fortune/extras/config.mk
 
-PRODUCT_PACKAGES += \
-    Launcher3QuickStep \
-    ThemePicker
-
 # Gestures
 PRODUCT_PACKAGES += \
     vendor.aospa.power-service
@@ -22,6 +18,9 @@ $(call inherit-product, vendor/google/pixel/config.mk)
 # Charger mode images
 PRODUCT_PACKAGES += \
     charger_res_images
+
+# Lawnchair
+$(call inherit-product, vendor/Lawnchair/product.mk)
 
 # OTA
 PRODUCT_PACKAGES += \
