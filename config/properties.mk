@@ -60,7 +60,3 @@ ifneq ($(TARGET_BUILD_VARIANT),eng)
 PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
     persist.sys.strictmode.disable=true
 endif
-
-# Volume panel dialog - SystemUI
-PRODUCT_SYSTEM_EXT_PROPERTIES += \
-    sys.fflag.override.settings_volume_panel_in_systemui=true
