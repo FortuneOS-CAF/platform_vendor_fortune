@@ -21,3 +21,13 @@ FORTUNE_BUILD_DATE_UTC := $(shell date -d '$(FORTUNE_DATE_YEAR)-$(FORTUNE_DATE_M
 FORTUNE_BUILD_DATE := $(FORTUNE_DATE_YEAR)$(FORTUNE_DATE_MONTH)$(FORTUNE_DATE_DAY)-$(FORTUNE_DATE_HOUR)$(FORTUNE_DATE_MINUTE)
 
 FORTUNE_VERSION := $(FORTUNE_BRAND)-$(FORTUNE_BASE)_$(FORTUNE_BUILD)-$(FORTUNE_BUILD_VERSION)-$(FORTUNE_BUILD_DATE)
+
+PRODUCT_SYSTEM_PROPERTIES += \
+    org.fortune.brand=$(FORTUNE_BRAND) \
+    org.fortune.build.version=$(FORTUNE_BUILD_VERSION) \
+    org.fortune.build_date=$(FORTUNE_BUILD_DATE) \
+    org.fortune.build_date_utc=$(FORTUNE_BUILD_DATE_UTC) \
+    org.fortune.clo.revision=$(CLO_REVISION) \
+    org.fortune.device=$(FORTUNE_BUILD) \
+    org.fortune.releasetype=$(FORTUNE_RELEASETYPE) \
+    org.fortune.version=$(FORTUNE_VERSION)
