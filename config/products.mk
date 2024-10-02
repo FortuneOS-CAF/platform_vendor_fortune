@@ -13,6 +13,7 @@ $(call inherit-product, vendor/qcom/sdclang/config/SnapdragonClang.mk)
 # Include FortuneOS makefiles
 $(call inherit-product, vendor/fortune/config/packages.mk)
 $(call inherit-product, vendor/fortune/config/properties.mk)
+$(call inherit-product, vendor/fortune/config/version.mk)
 
 # Move Wi-Fi modules to vendor
 PRODUCT_VENDOR_MOVE_ENABLED := true
