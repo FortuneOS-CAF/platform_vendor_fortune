@@ -4,6 +4,10 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
+# Build changelog
+ PRODUCT_PACKAGES += \
+    Changelog.txt
+
 # b/344511668
 PRODUCT_PACKAGES += \
     android.software.credentials.prebuilt.xml
