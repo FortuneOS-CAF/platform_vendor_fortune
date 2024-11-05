@@ -4,6 +4,9 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
+# CLO Revision
+CLO_REVISION := LA.QSSI.15.0.r1-11400-qssi.0
+
 FORTUNE_BRAND := FortuneOS
 FORTUNE_BASE := CLO
 FORTUNE_BUILD_VERSION := 15.0
