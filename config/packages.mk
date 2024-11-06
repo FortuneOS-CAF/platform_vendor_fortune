@@ -51,7 +51,7 @@ PRODUCT_PACKAGES += \
 
 # Theme Picker
 PRODUCT_PACKAGES += \
-    FortuneThemePicker
+    ThemePicker
 
 # Telephony - CLO
 PRODUCT_PACKAGES += \
