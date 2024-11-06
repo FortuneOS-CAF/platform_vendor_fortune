@@ -18,6 +18,7 @@ $(call inherit-product, vendor/fortune/config/overlay.mk)
 $(call inherit-product, vendor/fortune/config/packages.mk)
 $(call inherit-product, vendor/fortune/config/properties.mk)
 $(call inherit-product, vendor/fortune/config/version.mk)
+$(call inherit-product, vendor/fortune-extras/config.mk)
 
 # Include GMS, Modules and Pixel features
 $(call inherit-product, vendor/google/gms/config.mk)
