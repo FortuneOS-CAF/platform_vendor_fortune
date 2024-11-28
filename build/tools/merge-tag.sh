@@ -118,7 +118,7 @@ fi
 # update clo rev in vendor
 if $IS_QSSI; then
     echo -e "\n${blu}Updating CLO revision in vendor/fortune..."
-    sed -i "s|CLO_REVISION := .*|CLO_REVISION := $TAG|g" vendor/fortune/fortune/version.mk
+    sed -i "s|CLO_REVISION := .*|CLO_REVISION := $TAG|g" vendor/fortune/config/version.mk
     if git -C vendor/fortune commit -aq -m "fortune: version: update CLO revision to $TAG" &> /dev/null; then
         echo -e "${blu}CLO revision updated succesfully!"
         echo vendor/fortune >> success
