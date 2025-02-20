@@ -12,6 +12,3 @@ PRODUCT_PACKAGES += \
     FortuneSettingsOverlay \
     FortuneSettingsProviderOverlay \
     FortuneSystemUIOverlay
-
-PRODUCT_COPY_FILES += \
-    vendor/fortune/overlay/partition_order.xml:$(TARGET_COPY_OUT_PRODUCT)/overlay/partition_order.xml
