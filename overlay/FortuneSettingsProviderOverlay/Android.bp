@@ -6,6 +6,6 @@
 
 runtime_resource_overlay {
     name: "FortuneSettingsProviderOverlay",
-    system_ext_specific: true,
+    product_specific: true,
     sdk_version: "current",
 }
