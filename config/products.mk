@@ -78,3 +78,6 @@ endif
 # but also allow explicit overriding for testing and development.
 SYSTEM_OPTIMIZE_JAVA ?= true
 SYSTEMUI_OPTIMIZE_JAVA ?= true
+
+# Fortune signing keys
+-include vendor/fortune-keys/keys.mk
