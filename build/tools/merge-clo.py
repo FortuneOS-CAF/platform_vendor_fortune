@@ -19,7 +19,7 @@
 Merge script for AOSPA
 
  The source directory; this is automatically two folder up because the script
- is located in vendor/aospa/build/tools. Other ROMs will need to change this. The logic is
+ is located in vendor/fortune/build/tools. Other ROMs will need to change this. The logic is
  as follows:
 
  1. Get the absolute path of the script with os.path.realpath in case there is a symlink
@@ -40,7 +40,7 @@ from git.exc import GitCommandError
 
 BASE_URL = "https://git.codelinaro.org/clo/la/"
 WORKING_DIR = "{0}/../../../..".format(os.path.dirname(os.path.realpath(__file__)))
-MANIFEST_NAME = "aospa.xml"
+MANIFEST_NAME = "include/fortune.xml"
 REPOS_TO_MERGE = {}
 REPOS_RESULTS = {}
 
