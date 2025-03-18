@@ -119,6 +119,10 @@ PRODUCT_PACKAGES += \
     libtextclassifier_actions_suggestions_universal_model \
     libtextclassifier_lang_id_model
 
+# Theme Picker
+PRODUCT_PACKAGES += \
+    ThemePicker
+
 # WiFi
 PRODUCT_PACKAGES += \
     libwpa_client
